@@ -1,0 +1,543 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Firebirds - Home, Menu & Booking</title>
+    <!-- Google Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600;800&display=swap" rel="stylesheet">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Poppins', sans-serif;
+        }
+
+        body {
+            background-color: #f8f9fa;
+            color: #333;
+            line-height: 1.6;
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+        }
+
+        /* Fire Background Animation Header */
+        header {
+            position: relative;
+            background: linear-gradient(135deg, #8b0000, #ff4500, #ff8c00);
+            background-size: 300% 300%;
+            animation: fireBackground 8s ease infinite;
+            color: white;
+            text-align: center;
+            padding: 3rem 1rem;
+            box-shadow: 0 4px 15px rgba(255, 69, 0, 0.4);
+            overflow: hidden;
+        }
+
+        @keyframes fireBackground {
+            0% { background-position: 0% 50%; }
+            50% { background-position: 100% 50%; }
+            100% { background-position: 0% 50%; }
+        }
+
+        /* Logo Styling */
+        .brand-logo {
+            max-width: 280px;
+            width: 100%;
+            height: auto;
+            margin-bottom: 1rem;
+            filter: drop-shadow(0 4px 10px rgba(0, 0, 0, 0.4));
+        }
+
+        .restaurant-info {
+            margin-top: 0.8rem;
+            font-size: 1.1rem;
+            font-weight: 400;
+            text-shadow: 0 2px 4px rgba(0,0,0,0.5);
+        }
+
+        .restaurant-info p {
+            margin: 0.3rem 0;
+        }
+
+        .rating-badge {
+            display: inline-block;
+            background: #f1c40f;
+            color: #2c3e50;
+            padding: 0.3rem 0.9rem;
+            border-radius: 20px;
+            font-weight: 700;
+            margin-top: 0.8rem;
+            box-shadow: 0 4px 10px rgba(0,0,0,0.2);
+        }
+
+        /* Main Content with Background Sliding Images */
+        .main-content {
+            position: relative;
+            text-align: center;
+            padding: 7rem 1rem;
+            display: flex;
+            justify-content: center;
+            gap: 1.5rem;
+            flex-wrap: wrap;
+            overflow: hidden;
+            flex-grow: 1;
+        }
+
+        /* Slider Background Container */
+        .slider-container {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: 1;
+        }
+
+        .slide-img {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            opacity: 0;
+            transition: opacity 1.5s ease-in-out;
+        }
+
+        .slide-img.active {
+            opacity: 1;
+        }
+
+        /* Buttons over slider */
+        .action-btn {
+            position: relative;
+            z-index: 3;
+            background: linear-gradient(135deg, #e67e22, #d35400);
+            color: white;
+            font-size: 1.2rem;
+            font-weight: 700;
+            padding: 1rem 2.5rem;
+            border: none;
+            border-radius: 50px;
+            cursor: pointer;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.8);
+            transition: transform 0.3s ease, background 0.3s ease;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+
+        .action-btn:hover {
+            transform: scale(1.05);
+            background: linear-gradient(135deg, #d35400, #b94000);
+        }
+
+        /* Modal Styles */
+        .modal {
+            display: none;
+            position: fixed;
+            z-index: 1000;
+            left: 0;
+            top: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.75);
+            overflow-y: auto;
+            padding: 2rem 1rem;
+        }
+
+        .modal-content {
+            background: white;
+            max-width: 1000px;
+            margin: auto;
+            padding: 2.5rem;
+            border-radius: 15px;
+            position: relative;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
+            animation: fadeIn 0.3s ease;
+        }
+
+        .booking-modal-content {
+            max-width: 600px;
+            margin: 10vh auto;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(-20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .close-btn {
+            position: absolute;
+            right: 20px;
+            top: 15px;
+            font-size: 2.5rem;
+            font-weight: bold;
+            color: #aaa;
+            cursor: pointer;
+            transition: color 0.2s;
+        }
+
+        .close-btn:hover {
+            color: #c0392b;
+        }
+
+        .modal-title {
+            text-align: center;
+            font-size: 2.2rem;
+            color: #2c3e50;
+            margin-bottom: 2rem;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+
+        .category-title {
+            font-size: 1.5rem;
+            color: #c0392b;
+            margin: 2rem 0 1rem 0;
+            border-bottom: 2px solid #c0392b;
+            padding-bottom: 0.3rem;
+            text-transform: uppercase;
+        }
+
+        .menu-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 1.5rem;
+        }
+
+        .menu-card {
+            background: #fdfdfd;
+            border: 1px solid #eee;
+            border-radius: 10px;
+            padding: 1.2rem;
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.03);
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+        }
+
+        .card-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+            margin-bottom: 0.8rem;
+            border-bottom: 2px solid #f1f1f1;
+            padding-bottom: 0.6rem;
+        }
+
+        .item-title {
+            font-size: 1.1rem;
+            font-weight: 700;
+            color: #2c3e50;
+        }
+
+        .item-price {
+            font-size: 0.95rem;
+            font-weight: 600;
+            color: #e67e22;
+            background: #fdf3e7;
+            padding: 0.2rem 0.6rem;
+            border-radius: 15px;
+            white-space: nowrap;
+            text-align: right;
+        }
+
+        .item-description {
+            font-size: 0.9rem;
+            color: #666;
+        }
+
+        .booking-section {
+            background: #fdfdfd;
+            border: 1px solid #eee;
+            border-radius: 10px;
+            padding: 1.5rem;
+            margin-bottom: 1.5rem;
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.03);
+        }
+
+        .booking-section h3 {
+            font-size: 1.3rem;
+            color: #c0392b;
+            margin-bottom: 0.8rem;
+            text-transform: uppercase;
+            border-bottom: 2px solid #f1f1f1;
+            padding-bottom: 0.4rem;
+        }
+
+        .booking-section p {
+            font-size: 1rem;
+            color: #555;
+            margin: 0.4rem 0;
+        }
+
+        .booking-section a {
+            color: #e67e22;
+            text-decoration: none;
+            font-weight: 600;
+        }
+
+        .booking-section a:hover {
+            text-decoration: underline;
+        }
+
+        footer {
+            position: relative;
+            z-index: 3;
+            text-align: center;
+            padding: 1.5rem;
+            background: #2c3e50;
+            color: white;
+            font-size: 0.9rem;
+        }
+    </style>
+</head>
+<body>
+
+    <header>
+        <!-- Restaurant Logo Image -->
+        <img src="logo.png" alt="Firebirds Logo" class="brand-logo">
+        <div class="restaurant-info">
+            <p><strong>Address:</strong> 51 Umar Deen road, Wassan Pura Shad Bagh, Lahore, Pakistan</p>
+            <p><strong>Phone:</strong> 03044338877</p>
+            <!-- Live Google Rating Badge -->
+            <div id="google-rating" class="rating-badge">★ 4.9 / 5 (30 Reviews)</div>
+        </div>
+    </header>
+
+    <!-- Main Page Section with Background Sliding Images -->
+    <div class="main-content">
+        <!-- Slider Images Background (Corrected .jpeg extensions) -->
+        <div class="slider-container">
+            <img src="index (20).jpeg" class="slide-img active" alt="Restaurant Front">
+            <img src="index (1).jpeg" class="slide-img" alt="Pizza">
+            <img src="index (3).jpeg" class="slide-img" alt="Interior">
+            <img src="index (4).jpeg" class="slide-img" alt="Neon Sign">
+            <img src="index (5).jpeg" class="slide-img" alt="Counter">
+            <img src="index (6).jpeg" class="slide-img" alt="Shelves">
+            <img src="index (7).jpeg" class="slide-img" alt="Zinger">
+            <img src="index (8).jpeg" class="slide-img" alt="Seating">
+            <img src="index (9).jpeg" class="slide-img" alt="Food">
+            <img src="index (10).jpeg" class="slide-img" alt="Decor">
+        </div>
+
+        <!-- Buttons -->
+        <button class="action-btn" onclick="openMenuModal()">View Menu</button>
+        <button class="action-btn" onclick="openBookingModal()">Order and Booking</button>
+    </div>
+
+    <!-- Popup Modal for Full Menu -->
+    <div id="menuModal" class="modal">
+        <div class="modal-content">
+            <span class="close-btn" onclick="closeMenuModal()">&times;</span>
+            <h2 class="modal-title">Our Complete Menu</h2>
+
+            <!-- ROLLERS -->
+            <div class="category-title">Rollers</div>
+            <div class="menu-grid">
+                <div class="menu-card">
+                    <div class="card-header"><span class="item-title">CLASSIC SPARROW</span><span class="item-price">Rs. 350</span></div>
+                    <p class="item-description">Classic Zinger Fillet Strips with Mixed Salad/Pickle Salad and Sauce.</p>
+                </div>
+                <div class="menu-card">
+                    <div class="card-header"><span class="item-title">FIRE BIRD</span><span class="item-price">Rs. 390</span></div>
+                    <p class="item-description">Mashed Chicken with Mixed Salad/Pickle Salad, Chips and Sauce.</p>
+                </div>
+                <div class="menu-card">
+                    <div class="card-header"><span class="item-title">PERI FALCON</span><span class="item-price">Rs. 550</span></div>
+                    <p class="item-description">Grilled Chicken coated with Peri Sauce, Cheese Slice, Onion, Jalapeno, Chips and Sauce.</p>
+                </div>
+                <div class="menu-card">
+                    <div class="card-header"><span class="item-title">FIERY PHOENIX</span><span class="item-price">Rs. 440</span></div>
+                    <p class="item-description">Chicken Zinger Strips Dipped in fiery hot sauce with Mixed Salad/Pickle Salad, Chips, Cheese Slice and Sauce.</p>
+                </div>
+                <div class="menu-card">
+                    <div class="card-header"><span class="item-title">CREAMY MACAW</span><span class="item-price">Rs. 550</span></div>
+                    <p class="item-description">Malai Boti chunks with Chips, Mixed Salad/Pickle Salad and Creamy Sauce.</p>
+                </div>
+                <div class="menu-card">
+                    <div class="card-header"><span class="item-title">KEBBI PENGUIN</span><span class="item-price">Rs. 550</span></div>
+                    <p class="item-description">Fresh Kebab Sliced with Chips, Mixed Salad/Pickle Salad and Sauce.</p>
+                </div>
+                <div class="menu-card">
+                    <div class="card-header"><span class="item-title">SHASHLIK PEACOCK</span><span class="item-price">Rs. 690</span></div>
+                    <p class="item-description">Chicken Tikka Shashlik marinated with Special Secret Sauce, Chips, Melted Cheese, Mixed Salad/Pickle Salad and Sauce.</p>
+                </div>
+            </div>
+
+            <!-- BURGERS -->
+            <div class="category-title">Burgers</div>
+            <div class="menu-grid">
+                <div class="menu-card">
+                    <div class="card-header"><span class="item-title">STREET ROLLER</span><span class="item-price">Rs. 240</span></div>
+                    <p class="item-description">Homemade Shami with Double Eggs, Mixed Salad and Sauce.</p>
+                </div>
+                <div class="menu-card">
+                    <div class="card-header"><span class="item-title">FIERY PHOENIX</span><span class="item-price">Rs. 380</span></div>
+                    <p class="item-description">Chicken Zinger Dipped in with Mixed Salad, Cheese Slice and Sauce.</p>
+                </div>
+                <div class="menu-card">
+                    <div class="card-header"><span class="item-title">SMASHEY HAWK</span><span class="item-price">Rs. 490</span></div>
+                    <p class="item-description">Fresh Meat Mince Smash on Grill with Cheese Slice, Grill Onion, Jalapeno and Sauce.</p>
+                </div>
+                <div class="menu-card">
+                    <div class="card-header"><span class="item-title">THUNDER BIRD</span><span class="item-price">Rs. 740</span></div>
+                    <p class="item-description">Smashey Mince with Chicken Zinger Combo, Double Cheese Slice, Jalapeno, Grilled Onion and Sauce.</p>
+                </div>
+                <div class="menu-card">
+                    <div class="card-header"><span class="item-title">PERI FALCON</span><span class="item-price">Rs. 490</span></div>
+                    <p class="item-description">Grilled Chicken coated with Peri Sauce, Cheese Slice, Onion, Jalapeno and Sauce.</p>
+                </div>
+                <div class="menu-card">
+                    <div class="card-header"><span class="item-title">FIRE BIRD</span><span class="item-price">Rs. 300</span></div>
+                    <p class="item-description">Mashed Chicken with Mixed Salad/Pickle Salad and Sauce.</p>
+                </div>
+                <div class="menu-card">
+                    <div class="card-header"><span class="item-title">CLASSIC SPARROW</span><span class="item-price">Rs. 300</span></div>
+                    <p class="item-description">Classic Zinger Fillet with Mixed Salad and Sauce.</p>
+                </div>
+            </div>
+
+            <!-- PIZZA -->
+            <div class="category-title">Pizza (Solo / Medium / Large)</div>
+            <div class="menu-grid">
+                <div class="menu-card">
+                    <div class="card-header"><span class="item-title">CHEEZY DOVE</span><span class="item-price">Solo: 449<br>M: 949<br>L: 1499</span></div>
+                    <p class="item-description">Tomato Sauce Base with load of cheese.</p>
+                </div>
+                <div class="menu-card">
+                    <div class="card-header"><span class="item-title">CANARY CLASSIC</span><span class="item-price">Solo: 449<br>M: 949<br>L: 1499</span></div>
+                    <p class="item-description">Fresh Garlic Paste Base and Herbs with load of cheese.</p>
+                </div>
+                <div class="menu-card">
+                    <div class="card-header"><span class="item-title">FIERY PHOENIX</span><span class="item-price">Solo: 549<br>M: 1049<br>L: 1549</span></div>
+                    <p class="item-description">Fiery Hot Sauce Base with Tikka chunks, Fresh green chillies, jalapenos, Olives, Onion and cheese.</p>
+                </div>
+                <div class="menu-card">
+                    <div class="card-header"><span class="item-title">RED ROOSTER</span><span class="item-price">Solo: 549<br>M: 1049<br>L: 1549</span></div>
+                    <p class="item-description">Tomato Sauce Base with Tikka chunks, Olives, Onion, Green Peppers and cheese.</p>
+                </div>
+                <div class="menu-card">
+                    <div class="card-header"><span class="item-title">CREAMY MACAW</span><span class="item-price">Solo: 549<br>M: 1049<br>L: 1549</span></div>
+                    <p class="item-description">Creamy Special Sauce Base with Malai Boti chunks, Onion, Green peppers and cheese.</p>
+                </div>
+                <div class="menu-card">
+                    <div class="card-header"><span class="item-title">FIJI SPARROW</span><span class="item-price">Solo: 549<br>M: 1049<br>L: 1549</span></div>
+                    <p class="item-description">Creamy Special Sauce with Fajita chunks, Onion, Green Peppers, Herbs and cheese.</p>
+                </div>
+                <div class="menu-card">
+                    <div class="card-header"><span class="item-title">VEGI PARROTS</span><span class="item-price">Solo: 549<br>M: 1049<br>L: 1549</span></div>
+                    <p class="item-description">Tomato Base Sauce with Onion, Green Peppers, Olives, Little green chillies, Herbs and cheese.</p>
+                </div>
+                <div class="menu-card">
+                    <div class="card-header"><span class="item-title">PERI FALCON</span><span class="item-price">Solo: 549<br>M: 1049<br>L: 1549</span></div>
+                    <p class="item-description">Peri Sauce Base with Peri chicken chunks, Onion, Jalapenos, Little green chillies, Herbs, Green peppers and cheese.</p>
+                </div>
+                <div class="menu-card">
+                    <div class="card-header"><span class="item-title">ROBIN B.B.Q</span><span class="item-price">Solo: 549<br>M: 1049<br>L: 1549</span></div>
+                    <p class="item-description">B.B.Q Sauce Base with Tikka chunks, Onion, Herbs, Peppers and Cheese.</p>
+                </div>
+                <div class="menu-card">
+                    <div class="card-header"><span class="item-title">KEBBI PENGUIN</span><span class="item-price">Solo: 549<br>M: 1049<br>L: 1549</span></div>
+                    <p class="item-description">Tomato Sauce Base with Kebab chunks, Onion, Green Peppers, Olives, Herbs and cheese.</p>
+                </div>
+            </div>
+
+        </div>
+    </div>
+
+    <!-- Popup Modal for Order and Booking -->
+    <div id="bookingModal" class="modal">
+        <div class="modal-content booking-modal-content">
+            <span class="close-btn" onclick="closeBookingModal()">&times;</span>
+            <h2 class="modal-title">Order & Booking</h2>
+
+            <div class="booking-section">
+                <h3>Home Delivery</h3>
+                <p><strong>Phone Number:</strong> <a href="tel:03044338877">03044338877</a></p>
+            </div>
+
+            <div class="booking-section">
+                <h3>Table Booking</h3>
+                <p><strong>Address:</strong> 51 Umar Deen road, Wassan Pura Shad Bagh, Lahore, Pakistan</p>
+                <p><strong>Phone Number:</strong> <a href="tel:03044338877">03044338877</a></p>
+            </div>
+        </div>
+    </div>
+
+    <footer>
+        <p>&copy; 2026 Firebirds. All Rights Reserved.</p>
+    </footer>
+
+    <!-- Google Maps API Script with your API Key -->
+    <script async defer src="https://maps.googleapis.com/maps/api/js?key=AIzaSyBzmGqAf9Um0ujRCXTGphbGKtwrh_4BSXQ&libraries=places&callback=initMap"></script>
+
+    <script>
+        // Image Slider Script
+        let currentSlide = 0;
+        const slides = document.querySelectorAll('.slide-img');
+        
+        function nextSlide() {
+            slides[currentSlide].classList.remove('active');
+            currentSlide = (currentSlide + 1) % slides.length;
+            slides[currentSlide].classList.add('active');
+        }
+        setInterval(nextSlide, 3500);
+
+        // Google Rating Script
+        function initMap() {
+            try {
+                const map = new google.maps.Map(document.createElement('div'));
+                const request = {
+                    placeId: 'ChIJ9bWxcgAbGTkRreZCF-wvKgw', 
+                    fields: ['name', 'rating', 'user_ratings_total']
+                };
+                const service = new google.maps.places.PlacesService(map);
+                service.getDetails(request, (place, status) => {
+                    if (status === google.maps.places.PlacesServiceStatus.OK && place) {
+                        const rating = place.rating ? place.rating : '4.9';
+                        const totalReviews = place.user_ratings_total ? place.user_ratings_total : '30';
+                        document.getElementById('google-rating').innerHTML = `★ ${rating} / 5 (${totalReviews} Reviews)`;
+                    }
+                });
+            } catch (error) {
+                console.log("API Error:", error);
+            }
+        }
+
+        // Menu Modal Functions
+        function openMenuModal() {
+            document.getElementById('menuModal').style.display = 'block';
+        }
+
+        function closeMenuModal() {
+            document.getElementById('menuModal').style.display = 'none';
+        }
+
+        // Booking Modal Functions
+        function openBookingModal() {
+            document.getElementById('bookingModal').style.display = 'block';
+        }
+
+        function closeBookingModal() {
+            document.getElementById('bookingModal').style.display = 'none';
+        }
+
+        window.onclick = function(event) {
+            const menuModal = document.getElementById('menuModal');
+            const bookingModal = document.getElementById('bookingModal');
+            if (event.target == menuModal) {
+                menuModal.style.display = 'none';
+            }
+            if (event.target == bookingModal) {
+                bookingModal.style.display = 'none';
+            }
+        }
+    </script>
+
+</body>
+</html>
